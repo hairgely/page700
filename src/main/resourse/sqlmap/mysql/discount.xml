@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="discount">
+<select id="getDiscountlist" resultType="com.onpaging.bean.Discount" parameterType="map">
+		<![CDATA[
+			SELECT * FROM discount WHERE 1=1
+		]]>
+			<if test="kinds != null">
+				AND type1 IN 
+				<foreach collection="kinds" item="item" index="index" separator="," open="(" close=")">
+            	#{item}
+        	 </foreach>
+        	</if>
+			ORDER BY ${sortOptNo1} ${sortOptNo2} ${sortOptNo0}
+        	limit ${stlimit}, ${enlimit}
+	</select>
+<select id="getDiscountlistCnt" resultType="int" parameterType="map">
+		<![CDATA[
+			SELECT count(*) as cnt FROM discount WHERE 1=1
+		]]>
+			<if test="kinds != null">
+				AND type1 IN 
+			 <foreach collection="kinds" item="item" index="index" separator="," open="(" close=")">
+            	#{item}
+        	 </foreach>
+        	</if>
+			ORDER BY ${sortOptNo1} ${sortOptNo2} ${sortOptNo0}
+        	limit ${stlimit}, ${enlimit}
+	</select>
+<select id="getDiscountOne" resultType="com.onpaging.bean.Discount" parameterType="map">
+		<![CDATA[
+			SELECT * FROM discount where num = #{num}
+		]]>
+	</select>
+	<update id="addDiscount" parameterType="com.onpaging.bean.Discount">
+		<![CDATA[
+			INSERT INTO discount (title,contents,mcontents,type1,type2,type3,start,end,imgurl,xx,yy) values 
+			(#{title} ,#{contents},#{mcontents},#{type1},#{type2},#{type3},#{start},#{end},#{imgurl},#{xx},#{yy})
+		]]>
+	</update>
+	<update id="editDiscount" parameterType="com.onpaging.bean.Discount">
+		<![CDATA[
+			UPDATE discount SET 
+				title=#{title},contents=#{contents},type1=#{type1},type2=#{type2},type3=#{type3}
+				,start=#{start},end=#{end},imgurl=#{imgurl},xx=#{xx},yy=#{yy}
+			WHERE num=#{num}
+		]]>
+	</update>
+	<delete id="delDiscount" parameterType="com.onpaging.bean.Discount">
+		<![CDATA[
+			DELETE FROM discount WHERE num = #{num}
+		]]>
+	</delete>
+	
+	<select id="getCate" resultType="com.onpaging.bean.DisCate" parameterType="map">
+		<![CDATA[
+			SELECT * FROM discountkind WHERE 1=1
+			ORDER BY ordby
+		]]>
+        
+	</select>
+</mapper>

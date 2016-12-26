@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="planner">
+<select id="getSite" resultType="com.onpaging.bean.Site" parameterType="com.onpaging.bean.Site">
+		<![CDATA[
+			SELECT * FROM site WHERE kindx = #{kindx}
+		]]>
+	</select>
+<select id="getSiteu" resultType="com.onpaging.bean.Site" parameterType="com.onpaging.bean.Site">
+		<![CDATA[
+			SELECT * FROM siteu WHERE kindx = #{kindx} and etc=#{etc} ORDER BY ordby
+		]]>
+	</select>
+<select id="searchSite" resultType="com.onpaging.bean.Site" parameterType="com.onpaging.bean.Site">
+		<![CDATA[
+			SELECT * FROM site WHERE name LIKE CONCAT('%',#{name},'%') OR addre LIKE CONCAT('%',#{name},'%')
+		]]>
+	</select>
+<select id="getMySite" resultType="com.onpaging.bean.Site" parameterType="com.onpaging.bean.Site">
+		<![CDATA[
+			select s.num, s.name, s.addre, s.kindx, s.etc, u.orderb from userfa u
+			join site s
+			ON u.num = s.num
+			WHERE u.id = #{id}
+			ORDER BY u.orderb asc
+		]]>
+	</select>
+<select id="getCate" resultType="com.onpaging.bean.Cate" parameterType="com.onpaging.bean.Cate">
+		<![CDATA[
+			SELECT * FROM kindt ORDER BY ordby
+		]]>
+	</select>
+<select id="checkMySite" resultType="com.onpaging.bean.Userfa" parameterType="com.onpaging.bean.Userfa">
+		<![CDATA[
+			SELECT * FROM userfa WHERE id=#{id} and num=#{num}
+		]]>
+	</select>
+<select id="checkJoin" resultType="com.onpaging.bean.Usert" parameterType="com.onpaging.bean.Usert">
+		<![CDATA[
+			SELECT * FROM usert WHERE id=#{id} 
+		]]>
+	</select>
+<select id="checkFacebookJoin" resultType="com.onpaging.bean.Usert" parameterType="com.onpaging.bean.Usert">
+		<![CDATA[
+			SELECT * FROM usert WHERE id=#{id} and jtype=#{jtype}
+		]]>
+	</select>
+<select id="getUserfa" resultType="com.onpaging.bean.Userfa" parameterType="com.onpaging.bean.Userfa">
+		<![CDATA[
+			SELECT * FROM Userfa WHERE id=#{id}  and num=#{num}
+		]]>
+	</select>
+<insert id="joinStart" parameterType="com.onpaging.bean.Usert">
+		<![CDATA[
+			INSERT INTO usert (id,pwd,email) values (#{id} ,#{pwd} ,#{email} )
+		]]>
+	</insert>
+<update id="joinFacebookLogin" parameterType="com.onpaging.bean.Usert">
+		<![CDATA[
+			INSERT INTO usert (id,pwd,jtype) values (#{id} ,#{pwd},#{jtype})
+		]]>
+	</update>
+<insert id="addfavorite" parameterType="com.onpaging.bean.Userfa">
+		<![CDATA[
+			INSERT INTO userfa (id,num,orderb) values (#{id} ,#{num},#{orderb})
+		]]>
+	</insert>
+<insert id="addfavorite2" parameterType="com.onpaging.bean.Userfa">
+		<![CDATA[
+			INSERT INTO userfa (id,num,orderb) values (#{id} ,#{num},#{orderb})
+		]]>
+		<selectKey keyProperty="orderb" resultType="int" order="BEFORE">
+			SELECT max(orderb) as userfa from userfa WHERE id = #{num}
+		</selectKey>
+	</insert>
+	<select id="getMaxUserfa" resultType="int" parameterType="string">
+		<![CDATA[
+			select ifnull(max(u.orderb),1)+1 from userfa u WHERE u.id = #{id} 
+		]]>
+	</select>
+	<select id="getMaxKindtu" resultType="int" parameterType="string">
+		<![CDATA[
+			select ifnull(max(u.ordby),1)+1 from kindtu u WHERE u.etc = #{etc}
+		]]>
+	</select>
+	<select id="getUcate" resultType="com.onpaging.bean.Cate" parameterType="string">
+		<![CDATA[
+			select * from kindtu WHERE etc = #{id} order by ordby
+		]]>
+	</select>
+	<select id="getUcateOpen" resultType="com.onpaging.bean.Cate" parameterType="string">
+		<![CDATA[
+			select * from kindtu WHERE etc = #{id} AND openYn='Y' order by ordby
+		]]>
+	</select>
+<delete id="delfavorite" parameterType="com.onpaging.bean.Userfa">
+		<![CDATA[
+			DELETE FROM userfa WHERE id=#{id}  and num = #{num}
+		]]>
+	</delete>
+	<delete id="delsiteu" parameterType="com.onpaging.bean.Userfa">
+		<![CDATA[
+			DELETE FROM siteu WHERE etc=#{id} and num = #{num}
+		]]>
+	</delete>
+	<delete id="ucatedel" parameterType="com.onpaging.bean.Cate">
+		<![CDATA[
+			DELETE FROM kindtu WHERE etc = #{etc} and num = #{num}
+		]]>
+	</delete>
+<delete id="ucatedelsite" parameterType="com.onpaging.bean.Cate">
+		<![CDATA[
+			DELETE FROM siteu WHERE etc = #{etc} and kindx = #{num}#num#
+		]]>
+	</delete>
+<insert id="addcate" parameterType="string">
+		<![CDATA[
+			INSERT INTO kindt (name) values (#{name})
+		]]>
+	</insert>
+	<insert id="ucateadd" parameterType="com.onpaging.bean.Cate">
+		<![CDATA[
+			INSERT INTO kindtu (name,etc,stype,sgroup,ordby) values (#{name},#{etc},'0',0,#{ordby})
+		]]>
+	</insert>
+<insert id="addsite" parameterType="com.onpaging.bean.Site">
+		<![CDATA[
+			INSERT INTO site (name, addre, kindx) values (#{name}, #{addre}, #{kindx})
+		]]>
+	</insert>
+	<insert id="inputsite" parameterType="com.onpaging.bean.Site">
+		<![CDATA[
+			INSERT INTO site (name, addre, etc, kindx) values (#{name}, #{addre}, #{etc}, #{kindx})
+		]]>
+		<selectKey keyProperty="num" resultType="int">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+<insert id="inputsite2" parameterType="com.onpaging.bean.Site">
+		<![CDATA[
+			INSERT INTO siteu (name, addre, etc, kindx) values (#{name}, #{addre}, #{etc}, #{kindx})
+		]]>
+		<selectKey keyProperty="num" resultType="int" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+<insert id="inputsite3" parameterType="com.onpaging.bean.Site">
+		<![CDATA[
+			INSERT INTO site (name, addre, etc, kindx) values (#{name}, #{addre}, #{etc}, 999)
+		]]>
+		<selectKey keyProperty="num" resultType="int" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+<delete id="delcate" parameterType="string">
+		<![CDATA[
+			DELETE FROM kindt WHERE num = #{num}
+		]]>
+	</delete>
+<update id="getUserfaOrdera" parameterType="com.onpaging.bean.Userfa">
+		<![CDATA[
+			UPDATE userfa SET orderb=#{porderb} WHERE id=#{id}  AND num=#{num}
+		]]>
+	</update>
+<update id="getUserfaOrderb" parameterType="com.onpaging.bean.Userfa">
+		<![CDATA[
+			UPDATE userfa SET orderb=#{orderb} WHERE id=#{id}  AND num=#{pnum}
+		]]>
+	</update>
+	<update id="ucateeditnameup" parameterType="com.onpaging.bean.Cate">
+		<![CDATA[
+			UPDATE kindtu SET ordby=#{ordby} WHERE etc=#{etc} AND num=#{pnum}
+		]]>
+	</update>
+<update id="ucateedit" parameterType="com.onpaging.bean.Cate">
+		<![CDATA[
+			UPDATE kindtu SET name=#{name} WHERE etc=#{etc} AND num=#{num}
+		]]>
+</update>
+<update id="ucateeditOpenYn" parameterType="com.onpaging.bean.Cate">
+		<![CDATA[
+			UPDATE kindtu SET openYn=#{openYn} WHERE etc=#{etc} AND num=#{num}
+		]]>
+	</update>
+<update id="updateTempKey" parameterType="com.onpaging.bean.Usert">
+		<![CDATA[
+			UPDATE usert SET tmpkey=#{tmpkey} WHERE id=#{id}
+		]]>
+	</update>
+<update id="updatePassWord" parameterType="com.onpaging.bean.Usert">
+		<![CDATA[
+			UPDATE usert SET tmpkey=#{tmpkey}, pwd=#{pwd} WHERE id=#{id}
+		]]>
+	</update>
+	<delete id="delSiteAd" parameterType="com.onpaging.bean.Site">
+		<![CDATA[
+			DELETE FROM site WHERE num = #{num}
+		]]>
+	</delete>
+</mapper>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:task="http://www.springframework.org/schema/task"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd  
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd  
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd">
+
+    <context:component-scan base-package="com.onpaging" />
+    
+    <mvc:resources location="/**" mapping="/**" />
+    
+    <mvc:annotation-driven />
+    
+    <!-- 
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**" />
+            <bean class="com.onpaging.utils.LoginCheckInterceptor" />
+        </mvc:interceptor>
+    </mvc:interceptors>
+     -->
+    
+    <task:executor id="executor" keep-alive="5" pool-size="5-10" queue-capacity="10" rejection-policy="ABORT"/> 
+    <task:scheduler id="scheduler" pool-size="10" />
+    <task:annotation-driven executor="executor" scheduler="scheduler"/> 
+
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/jsp/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+    
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="utf-8"/>
+        <property name="maxUploadSize" value="100000000000"/>
+    </bean>
+    
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>messages.common</value>
+			</list>
+		</property>
+	</bean>
+    
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter" />
+                <bean class="org.springframework.http.converter.FormHttpMessageConverter" />
+                <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <value>image/jpeg</value>
+                            <value>image/jpg</value>
+                            <value>image/gif</value>
+                            <value>image/png</value>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter" />
+                <bean class="org.springframework.http.converter.BufferedImageHttpMessageConverter" />
+                <bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" >
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <value>text/html</value>
+                            <value>application/json</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+    <!-- 이메일 보내기 --> 
+	<bean id="mailSender" class ="org.springframework.mail.javamail.JavaMailSenderImpl" >
+	    <property name="host" value="smtp.gmail.com" />
+	    <!-- <property name="port" value="587" /> -->
+	    <property name="username" value="xxxxxxxxxx@xxxxxxxxxx.com" />
+	    <property name="password" value="xxxxxxxxxx" />
+	    <property name="javaMailProperties">
+	    <props>
+	        <prop key="mail.smtp.auth">true</prop>
+	        <prop key="mail.smtp.starttls.required">true</prop>
+	        <prop key="mail.smtp.starttls.enable">true</prop>
+	        <prop key="mail.smtp.socketFactory.class">javax.net.ssl.SSLSocketFactory</prop>
+	        <prop key="mail.smtp.socketFactory.fallback">false</prop>
+	        <prop key="mail.smtp.port">465</prop>
+	        <prop key="mail.smtp.socketFactory.port">465</prop>
+	    </props>
+	    </property>
+	</bean>
+    <!-- 프로퍼티 -->
+    <util:properties id="config" location="classpath:config/system.local.properties" />
+    
+</beans>

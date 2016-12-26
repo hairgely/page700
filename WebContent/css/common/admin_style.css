@@ -1,0 +1,6 @@
+/* CSS Document */
+a{color:#333;}
+.btn_navi{text-align:center; margin-top:20px; font-size:12px;}
+.btn_navi a{text-decoration:none; display:inline-block; border:1px solid #ccc; border-radius:2px; padding:2px 4px;}
+.btn_navi span,
+.btn_navi a:hover{display:inline-block; padding:2px 4px; border:1px solid #ccc; border-radius:2px; background:#ccc;}

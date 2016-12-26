@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="text">
+	<select id="getText" resultType="com.onpaging.bean.Mtext" parameterType="map">
+		<![CDATA[
+			SELECT num, title, linkUrl, contents,mcontents,mcontents1,mcontents2, recomCnt, clickCnt, ltime
+			FROM wetext
+			WHERE 1=1
+		]]>
+			ORDER BY ${sortOptNo1} ${sortOptNo2} ${sortOptNo0}
+        	limit ${stlimit}, ${enlimit}
+	</select>
+	<select id="getTextCnt" resultType="int">
+		<![CDATA[
+			SELECT count(*) as cnt
+			FROM wetext
+		]]>
+			ORDER BY ltime desc
+	</select>
+	<update id="insertText" parameterType="com.onpaging.bean.Mtext">
+		<![CDATA[
+			INSERT INTO wetext
+			(contents,mcontents,mcontents1,mcontents2, title, linkUrl, recomCnt, clickCnt, ltime)
+			VALUES (#{contents},#{mcontents},#{mcontents1},#{mcontents2}, #{title}, #{linkUrl}, 0, 0, NOW())
+		]]>
+	</update>
+	
+	<update id="editRecom" parameterType="com.onpaging.bean.Mtext">
+		<![CDATA[
+			UPDATE wetext
+			SET recomCnt = recomCnt+1
+			WHERE num = #{num}
+		]]>
+	</update>
+	
+	<update id="commentSave" parameterType="com.onpaging.bean.Mtext">
+		<![CDATA[
+			INSERT INTO weretext
+			(contents, pnum, ltime)
+			VALUES (#{contents}, #{num}, NOW())
+		]]>
+	</update>
+	
+	<select id="getCommentCnt" resultType="int">
+		<![CDATA[
+			SELECT count(*) as cnt
+			FROM weretext
+			WHERE pnum = #{num}
+		]]>
+	</select>
+	
+	<select id="getComment" resultType="com.onpaging.bean.Mtext" parameterType="map">
+		<![CDATA[
+			SELECT contents, num, ltime
+			FROM weretext
+			WHERE pnum = #{num}
+			ORDER BY ${sortOptNo1} ${sortOptNo2} ${sortOptNo0}
+        	limit ${stlimit}, ${enlimit}
+		]]>
+	</select>
+</mapper>

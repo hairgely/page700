@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lunch">
+	<select id="getLunch" parameterType="com.onpaging.bean.Lunch" resultType="com.onpaging.bean.Lunch">
+		<![CDATA[
+			SELECT lnum, unum, lname, ldate, lpay, ltype, lplace, lat, lon, lmemo, lrate, lphoto, create_time as createTime
+			FROM lunch
+			WHERE lnum = #{lnum}
+		]]>
+			
+	</select>
+	<select id="getLunchs" parameterType="com.onpaging.bean.Lunch" resultType="com.onpaging.bean.Lunch">
+		<![CDATA[
+			SELECT lnum, unum, lname, ldate, lpay, ltype, lplace, lat, lon, lmemo, lrate, lphoto, create_time as createTime
+			FROM lunch
+		]]>
+			WHERE unum = #{unum}
+	</select>
+	<select id="getLunchsRecently" parameterType="com.onpaging.bean.Lunch" resultType="com.onpaging.bean.Lunch">
+		<![CDATA[
+			SELECT lnum, unum, lname, ldate, lpay, ltype, lplace, lat, lon, lmemo, lrate, lphoto, create_time as createTime
+			FROM lunch
+		]]>
+			order by create_time desc 
+			limit 10
+	</select>
+	<select id="getLunchsSys" resultType="com.onpaging.bean.Lunch" parameterType="com.onpaging.bean.Lunch">
+		<![CDATA[
+			SELECT lnum, lname, ldate, ltype, lmemo, lphoto, create_time
+			FROM lunchsys
+		]]>
+			WHERE ldate = DATE_FORMAT(now(),'%Y%m%d')
+	</select>
+	<select id="getLunchsMy" resultType="com.onpaging.bean.Lunch" parameterType="com.onpaging.bean.Lunch">
+		<![CDATA[
+			SELECT ldate, unum, lname, ltype, lmemo, lphoto, create_time as createTime
+			FROM lunchmy
+			WHERE unum = #{unum}
+			AND ldate = #{ldate}
+		]]>
+	</select>
+	<insert id="insertLunch" parameterType="com.onpaging.bean.Lunch">
+		<![CDATA[
+			INSERT INTO lunch
+			(lname, unum, ldate, lpay, ltype, lplace, lat, lon, lmemo, lrate, lphoto, create_time)
+			VALUES 
+			(#{lname}, #{unum}, #{ldate}, #{lpay}, #{ltype}, #{lplace}, #{lat}, #{lon}, #{lmemo}, #{lrate}, #{lphoto}, NOW())
+		]]>
+		<selectKey keyProperty="lnum" resultType="Integer" order="AFTER">   
+	     SELECT LAST_INSERT_ID()
+	    </selectKey>
+	</insert>
+	
+	<update id="updateLunch" parameterType="com.onpaging.bean.Lunch">
+			UPDATE lunch
+			SET
+				<if test='lname != null and lname != ""'>
+				lname=#{lname},
+				</if>
+				<if test='ldate != null and ldate != ""'>
+				ldate=#{ldate},
+				</if>
+				<if test='lpay != null and lpay != ""'>
+				lpay=#{lpay},
+				</if>
+				<if test='ltype != null and ltype != ""'>
+				ltype=#{ltype},
+				</if>
+				<if test='lplace != null and lplace != ""'>
+				lplace=#{lplace},
+				</if>
+				<if test='lat != null and lat != ""'>
+				lat=#{lat},
+				</if>
+				<if test='lon != null and lon != ""'>
+				lon=#{lon},
+				</if>
+				<if test='lmemo != null and lmemo != ""'>
+				lmemo=#{lmemo},
+				</if>
+				<if test='lrate != null and lrate != ""'>
+				lrate=#{lrate},
+				</if>
+				<if test='lphoto != null and lphoto != ""'>
+				lphoto=#{lphoto},
+				</if>
+				create_time=NOW()
+			WHERE lnum=#{lnum}
+			and unum=#{unum}
+	</update>
+	
+	<delete id="deleteLunch" parameterType="com.onpaging.bean.Lunch">
+			DELETE FROM lunch WHERE lnum=#{lnum}
+	</delete>
+	
+</mapper>	

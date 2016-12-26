@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hottext">
+	<select id="getText" resultType="com.onpaging.bean.Htext" parameterType="map">
+		<![CDATA[
+			SELECT num, title, linkUrl, contents,mcontents,mcontents1,mcontents2, recomCnt, clickCnt, ltime
+			FROM hottext
+			WHERE 1=1
+		]]>
+			ORDER BY ${sortOptNo1} ${sortOptNo2} ${sortOptNo0}
+        	limit ${stlimit}, ${enlimit}
+	</select>
+	<select id="getTextCnt" resultType="int">
+		<![CDATA[
+			SELECT count(*) as cnt
+			FROM hottext
+		]]>
+			ORDER BY ltime desc
+	</select>
+	<select id="commentAvg" resultType="int">
+		<![CDATA[
+			SELECT avg(pscore) as pscore
+			FROM hotretext
+			WHERE pnum = #{num}
+		]]>
+	</select>
+	<select id="viewPost" resultType="com.onpaging.bean.Htext" parameterType="map">
+		<![CDATA[
+			SELECT num, title, linkUrl, contents,mcontents,mcontents1,mcontents2, recomCnt, clickCnt, ltime
+			FROM hottext
+			WHERE 1=1
+				AND num = #{num}
+		]]>
+	</select>
+	<update id="insertText" parameterType="com.onpaging.bean.Htext">
+		<![CDATA[
+			INSERT INTO hottext
+			(contents,mcontents,mcontents1,mcontents2, title, linkUrl, recomCnt, clickCnt, ltime)
+			VALUES (#{contents},#{mcontents},#{mcontents1},#{mcontents2}, #{title}, #{linkUrl}, 0, 0, NOW())
+		]]>
+	</update>
+	
+	<update id="editRecom" parameterType="com.onpaging.bean.Htext">
+		<![CDATA[
+			UPDATE hottext
+			SET recomCnt = recomCnt+1
+			WHERE num = #{num}
+		]]>
+	</update>
+	
+	<insert id="commentSave" parameterType="com.onpaging.bean.Htext">
+		<![CDATA[
+			INSERT INTO hotretext
+			(contents, title, pscore, pnum, ltime)
+			VALUES (#{contents}, #{title},#{pscore}, #{num}, NOW())
+		]]>
+		<selectKey keyProperty="comNum" resultType="Integer" order="AFTER">   
+	     SELECT LAST_INSERT_ID()
+	    </selectKey>
+	</insert>
+	
+	<select id="getCommentCnt" resultType="int">
+		<![CDATA[
+			SELECT count(*) as cnt
+			FROM hotretext
+			WHERE pnum = #{num}
+		]]>
+	</select>
+	
+	<select id="getComment" resultType="com.onpaging.bean.Htext" parameterType="map">
+		<![CDATA[
+			SELECT contents, num, ltime, title
+			FROM hotretext
+			WHERE pnum = #{num}
+			ORDER BY ${sortOptNo1} ${sortOptNo2} ${sortOptNo0}
+        	limit ${stlimit}, ${enlimit}
+		]]>
+	</select>
+	
+	<select id="getCommentAll" resultType="com.onpaging.bean.Htext" parameterType="map">
+		<![CDATA[
+			SELECT contents, num, ltime, title
+			FROM hotretext
+			WHERE pnum = #{num}
+			ORDER BY ltime
+		]]>
+	</select>
+	<select id="getCommentOne" resultType="com.onpaging.bean.Htext" parameterType="map">
+		<![CDATA[
+			SELECT contents, num, ltime, title
+			FROM hotretext
+			WHERE num = #{num}
+		]]>
+	</select>
+</mapper>
